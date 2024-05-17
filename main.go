@@ -23,14 +23,15 @@ func (b *BytesClosingBuffer) Close() error {
     return nil
 }
 
-func writeTo(w io.Writer, msg []byte) error {
-    _, err := w.Write(msg)
+func writeTo(wc io.WriteCloser, msg []byte) error {
+    defer wc.Close()
+
+    _, err := wc.Write(msg)
     return err
 }
 
 func main() {
     buf := NewBytesClosingBuffer()
-    defer buf.Close()
 
     if err := writeTo(buf, []byte("Happy newyear")); err != nil {
         log.Fatal(err)
